@@ -1,12 +1,32 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-
+import { useNavigate } from 'react-router-dom'
 const Login = () => {
+  const navigate=useNavigate()
+  const[logincreds,setlogincreds]=useState({})
+  const {login}=useContext(AuthContext)
+  const handleChange=(e)=>{
+      
+         const{name,value}=e.target;
+         setlogincreds({
+             ...logincreds,
+             [name]:value,
+         })
+  }
+  const handleSubmit=(e)=>{
+      e.preventDefault();
+      login()
+      navigate("/Product")
+    
+  }
   return (
     <div>
-      <input data-cy="login-email" />
-      <input data-cy="login-password" />
-      <button data-cy="login-submit"></button>
+      <form onSubmit={handleSubmit}>
+      <input data-cy="login-email" type="email" name="email" placeholder="email" onChange={handleChange}/>
+      <input data-cy="login-password" type="password" name="password" placeholder="enter password" onChange={handleChange} />
+      <button data-cy="login-submit">submit</button>
+      </form>
+
     </div>
   );
 };
