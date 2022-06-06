@@ -1,16 +1,25 @@
-import React, { useContext } from "react";
-import { Navigate } from 'react-router-dom'
-import { AuthContext } from "../context/AuthContext";
+import React, { createContext } from "react";
+import { useEffect, useState } from "react";
+const axios = require("axios").default;
 
-const RequiredAuth = ({ children }) => {
-  const{isAuth}=useContext(AuthContext)
-  if(isAuth){
-  return children;
-  }
-  else{
-    return <Navigate to="/Login"/>
-  }
+export const CartContext = createContext();
+
+export const CartProvider = ({ children }) => {
+  const [cartCount, setCartCount] = useState(0);
   
-};
+  
 
-export default RequiredAuth;
+  useEffect(() => {
+    axios(`http://localhost:8080/cartItems`).then((r) => {
+      setCartCount(r.data.length);
+    });
+  }, []);
+
+  
+
+  return (
+    <CartContext.Provider value={{ cartCount }}>
+      {children}
+    </CartContext.Provider>
+  );
+};

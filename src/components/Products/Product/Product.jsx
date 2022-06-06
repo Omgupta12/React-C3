@@ -1,62 +1,72 @@
-import React,{useState,useEffect, useContext} from "react";
-import axios from 'axios'
-import { CartContext } from "../../../context/CartContext";
-const Product = () => {
+import { useState } from "react";
+const axios = require("axios").default;
+
+const Product = ({ item }) => {
   // Note: this id should come from api
-  
-const {addtocart} =useContext(CartContext)
-const{removetocart}=useContext(CartContext)
-const {count}=useContext(CartContext)
-  const[data,setdata]=useState([])
 
-  const [page,setpage]=useState(1)
-  const[counter,setcounter]=useState(1)
-  const handleadd=()=>{
-          setcounter(counter+1)
-  }
-  const handlesub=()=>{
-    setcounter(counter-1)
-}
-  useEffect(()=>{
-  
-    const getdata=async()=>{
-      let r=await axios.get(`http://localhost:8080/products`);
-      console.log(r.data);
-      setdata(r.data)
-      console.log(r.data)
-    }
+  const [count, setCount] = useState(1);
+  const [addToCart, setAddToCart] = useState({});
 
-    getdata()
-  },[page])
-  const product = { id: 1 };
+  const handleDecCount = () => {
+    setCount(count - 1);
+  };
+
+  const handleCart = (id) => {
+    setAddToCart({ productID: id, count: count });
+    handleAddCart(id);
+  };
+
+  const handleAddCart = (id) => {
+    axios(`http://localhost:8080/cartItems`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: {
+        productID: id,
+        count: count,
+      },
+    });
+  };
+
+  const deleteCart = (id) => {
+    // axios(`http://localhost:8080/cartItems/${id}`)
+      
+  };
+
   return (
-  
-     
-          <div>
-      {data.map((data,index)=>(
-
-     
-    <div data-cy={`product-${product.id}`}>
-     
-      <h3 data-cy="product-name">{data.name}</h3>
-      <h6 data-cy="product-description">{data.description}</h6>
-      <button data-cy="product-add-item-to-cart-button" onClick={addtocart}>ADD TO CART</button>
+    <div data-cy={`product-${item.id}`} key={item.id} className="singleProduct">
+      <h3 data-cy="product-name">{item.name}</h3>
+      <h6 data-cy="product-description">{item.description}</h6>
+      <button
+        data-cy="product-add-item-to-cart-button"
+        onClick={() => handleCart(item.id)}
+      >
+        Add to Cart
+      </button>
       <div>
-        <button data-cy="product-increment-cart-item-count-button" onClick={handleadd}>+</button>
-        <span data-cy="product-count">
-          {
-            // Count here from CartItems
-            <button>{counter}</button>
-          }
-        </span>
-        <button data-cy="product-decrement-cart-item-count-button" onClick={handlesub} disabled={counter===0}>-</button>
-        <button data-cy="product-remove-cart-item-button" onClick={removetocart} disabled={count===0}>REMOVE TO CART</button>
+        <button
+          data-cy="product-increment-cart-item-count-button"
+          onClick={() => setCount(count + 1)}
+        >
+          +
+        </button>
+        <span data-cy="product-count"> {count} </span>
+        <button
+          data-cy="product-decrement-cart-item-count-button"
+          onClick={handleDecCount}
+          disabled={count === 1}
+        >
+          -
+        </button>
+        <button
+          data-cy="product-remove-cart-item-button"
+          onClick={() => deleteCart(item.id)}
+        >
+          Remove form Cart
+        </button>
       </div>
     </div>
-   
-   ))}
- </div>
-     
   );
 };
 

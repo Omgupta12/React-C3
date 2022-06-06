@@ -1,11 +1,13 @@
-import React from "react";
-import Products from "../components/Products/Products"
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 const Home = () => {
-  return( <div>{/* Code here */}
-  <p>Home page</p>
-  <Products/>
-  </div>
-  )
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/login");
+  }, []);
+
+  return <div>{/* Code here */}</div>;
 };
 
 export default Home;
